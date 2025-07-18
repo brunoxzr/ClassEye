@@ -1,0 +1,6 @@
+train: C:/Users/Bruno/Documents/slaaa/OneDrive/Desktop/detectify/ClassEye/dataset/images/train
+val: C:/Users/Bruno/Documents/slaaa/OneDrive/Desktop/detectify/ClassEye/dataset/images/val
+augment: true  # No arquivo data.yaml
+
+nc: 5  # Número de classes (modifique se necessário)
+names: ['dormindo', 'acordado', 'copiando', 'atento', 'distraido']

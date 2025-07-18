@@ -1,0 +1,26 @@
+<annotation>
+	<folder>train</folder>
+	<filename>dormindo (8).png</filename>
+	<path>C:\Users\Bruno\Documents\slaaa\OneDrive\Desktop\detectify\yolov5\dataset\images\train\dormindo (8).png</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>272</width>
+		<height>243</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>dormindo</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>8</xmin>
+			<ymin>19</ymin>
+			<xmax>272</xmax>
+			<ymax>243</ymax>
+		</bndbox>
+	</object>
+</annotation>

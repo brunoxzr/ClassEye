@@ -32,7 +32,7 @@ matplotlib.use('Agg')  # Backend não interativo
 
 # Arquivos e configurações
 log_file = 'static/reports/detection_log.csv'
-UPLOAD_FOLDER = 'uploads'       #isso acontece pq eu comi o cu de qm ta lendo
+UPLOAD_FOLDER = 'uploads'
 PROCESSED_FOLDER = 'processed'
 REPORT_FOLDER = 'static/reports' 
 LOG_FILE = os.path.join(REPORT_FOLDER, 'detection_log.csv')
@@ -93,7 +93,7 @@ def progress_status():
 @app.route('/upload', methods=['POST'])
 def upload_file():
     try:
-        if 'file' not in request.files:
+        if 'file' not in request.files: #isso acontece pq eu comi o cu de qm ta lendo
             return jsonify({"error": "Nenhum arquivo foi enviado"}), 400
 
         file = request.files['file']
@@ -383,7 +383,7 @@ def select_camera():
 
 # Configuração da interface gráfica
 root = tk.Tk()
-root.title("Reconhecimento de Objetos com YOLOv5")
+root.title("Reconhecimento ao vivo")
 root.geometry("600x400")
 root.configure(background="#f0f0f0")
 
@@ -391,7 +391,7 @@ style = ttk.Style()
 style.configure("TButton", font=("Helvetica", 12), padding=10)
 style.configure("TLabel", font=("Helvetica", 14), background="#f0f0f0")
 
-title_label = ttk.Label(root, text="Reconhecimento de Objetos com YOLOv5")
+title_label = ttk.Label(root, text="Reconhecimento ao vivo")
 title_label.pack(pady=20)
 
 btn_live_detection = ttk.Button(root, text="Detecção ao Vivo", command=lambda: live_detection(select_camera()))

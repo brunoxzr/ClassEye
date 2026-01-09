@@ -17,6 +17,11 @@ import csv
 import datetime
 import matplotlib
 import subprocess
+from flask_socketio import SocketIO
+import time
+import os
+os.environ["FLASK_RUN_FROM_CLI"] = "false"
+
 REPORTS_DIR = 'static/reports'
 
 def convert_video_ffmpeg(input_path, output_path):
@@ -50,7 +55,11 @@ model = model.to(device)
 
 
 # Configuração do Flask
+
 app = Flask(__name__)
+socketio = SocketIO(app, async_mode="threading")
+
+socketio = SocketIO(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 progress = {"current": 0}  # Progresso global
 
@@ -179,6 +188,22 @@ def graph_data():
 
 # --- FUNÇÕES DE PROCESSAMENTO ---
 
+
+def enviar_dados_ao_vivo():
+    """Envia dados de detecção em tempo real para o gráfico."""
+    while True:
+        try:
+            # Aqui você vai colocar a contagem real do YOLO
+            dados = {
+                "timestamp": time.strftime("%H:%M:%S"),
+                "atento": np.random.randint(0, 10),  # troca depois pelo valor real
+                "distraido": np.random.randint(0, 5) # troca depois pelo valor real
+            }
+            socketio.emit("atualizacao_grafico", dados)
+        except Exception as e:
+            print(f"❌ Erro no envio em tempo real: {e}")
+        socketio.sleep(2)  # envia a cada 2s
+        
 def process_image(image_path):
     """Processa uma imagem"""
     image = cv2.imread(image_path)
@@ -358,10 +383,11 @@ def process_image(image_path):
 
     return detections, output_path
 
-
 # --- EXECUÇÃO DO FLASK ---
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.start_background_task(enviar_dados_ao_vivo)
+    socketio.run(app, host="localhost", port=5000, debug=True)
+
 
 def live_detection(selected_camera_index=0):
     cap = cv2.VideoCapture(selected_camera_index)

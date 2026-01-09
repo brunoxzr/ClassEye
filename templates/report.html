@@ -1,102 +1,459 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório de Detecção</title>
+    <title>📊 Relatório de Análise - ClassEye</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-    <header class="navbar">
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
         <div class="logo">
-            <img src="/static/images/logo.png" alt="Detectify Logo">
-            <span>Detectify</span>
+            <img src="/static/images/logo.png" alt="ClassEye Logo" />
+            <span>ClassEye</span>
         </div>
         <div class="nav-links">
-            <a href="/">Início</a>
-            <a href="/history">Histórico</a>
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="/history"><i class="fas fa-history"></i> Histórico</a>
         </div>
-    </header>
+    </nav>
 
+    <!-- Main Content -->
     <main class="main-container">
-        <h1>Relatório de Detecção</h1>
+        <div class="report-header">
+            <h1><i class="fas fa-chart-bar"></i> Relatório de Análise</h1>
+            <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 2rem;">
+                Análise detalhada dos comportamentos detectados usando inteligência artificial
+            </p>
+            
+            <!-- Report Controls -->
+            <div class="report-controls">
+                <button class="btn btn-secondary" onclick="window.print()">
+                    <i class="fas fa-print"></i>
+                    Imprimir
+                </button>
+                <button class="btn btn-secondary" onclick="downloadReport()">
+                    <i class="fas fa-download"></i>
+                    Baixar PDF
+                </button>
+                <button class="btn" onclick="shareReport()">
+                    <i class="fas fa-share"></i>
+                    Compartilhar
+                </button>
+            </div>
+        </div>
 
-        <!-- Gráfico de Pizza -->
-        <h2>Distribuição de Alunos</h2>
-        <canvas id="pieChart" width="400" height="200"></canvas>
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card total">
+                <div class="card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="card-content">
+                    <h3 id="totalCount">0</h3>
+                    <p>Total de Detecções</p>
+                </div>
+            </div>
+            <div class="summary-card attention">
+                <div class="card-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div class="card-content">
+                    <h3 id="attentionCount">0</h3>
+                    <p>Atentos</p>
+                </div>
+            </div>
+            <div class="summary-card distracted">
+                <div class="card-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="card-content">
+                    <h3 id="distractedCount">0</h3>
+                    <p>Distraídos</p>
+                </div>
+            </div>
+            <div class="summary-card sleeping">
+                <div class="card-icon">
+                    <i class="fas fa-bed"></i>
+                </div>
+                <div class="card-content">
+                    <h3 id="sleepingCount">0</h3>
+                    <p>Dormindo</p>
+                </div>
+            </div>
+        </div>
 
-        <!-- Gráfico de Linha -->
-        <h2>Evolução Temporal</h2>
-        <canvas id="lineChart" width="400" height="200"></canvas>
+        <!-- Charts Container -->
+        <div class="charts-container">
+            <!-- Distribution Chart -->
+            <div class="chart-section">
+                <div class="chart-header">
+                    <h2><i class="fas fa-chart-pie"></i> Distribuição de Comportamentos</h2>
+                    <p>Proporção dos diferentes comportamentos detectados</p>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Temporal Evolution -->
+            <div class="chart-section">
+                <div class="chart-header">
+                    <h2><i class="fas fa-chart-line"></i> Evolução Temporal</h2>
+                    <p>Variação dos comportamentos ao longo do tempo</p>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Analysis -->
+        <div class="detailed-analysis">
+            <h2><i class="fas fa-microscope"></i> Análise Detalhada</h2>
+            
+            <div class="analysis-grid">
+                <div class="analysis-card">
+                    <div class="analysis-header">
+                        <i class="fas fa-trophy"></i>
+                        <h3>Pontos Positivos</h3>
+                    </div>
+                    <ul id="positivePoints">
+                        <li>Carregando análise...</li>
+                    </ul>
+                </div>
+                
+                <div class="analysis-card">
+                    <div class="analysis-header">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3>Pontos de Atenção</h3>
+                    </div>
+                    <ul id="attentionPoints">
+                        <li>Carregando análise...</li>
+                    </ul>
+                </div>
+                
+                <div class="analysis-card">
+                    <div class="analysis-header">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3>Recomendações</h3>
+                    </div>
+                    <ul id="recommendations">
+                        <li>Carregando recomendações...</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Section (if available) -->
+        {% if video_path %}
+        <div class="video-section">
+            <h2><i class="fas fa-video"></i> Vídeo Processado</h2>
+            <div class="video-container">
+                <video controls preload="metadata">
+                    <source src="{{ video_path }}" type="video/mp4">
+                    Seu navegador não suporta reprodução de vídeo.
+                </video>
+            </div>
+        </div>
+        {% endif %}
     </main>
 
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2025 Detectify. Todos os direitos reservados.</p>
+        <p>
+            <i class="fas fa-brain"></i>
+            ClassEye - Powered by AI | © 2024 Todos os direitos reservados
+        </p>
     </footer>
 
-    <!-- Script para Gráficos com Animações -->
     <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Enhanced color palette for charts
+        const chartColors = {
+            dormindo: '#8e44ad',
+            acordado: '#4caf50', 
+            copiando: '#ff9f40',
+            atento: '#76c7c0',
+            distraido: '#f44336'
+        };
+
         async function loadGraphData() {
-            const response = await fetch('/graph-data'); // Busca dados no Flask
-            const result = await response.json();
+            try {
+                const response = await fetch('/graph-data');
+                const result = await response.json();
 
-            const timestamps = result.timestamps;
-            const data = result.data;
+                if (result.error) {
+                    console.error('Erro ao carregar dados:', result.error);
+                    return;
+                }
 
-            // Gráfico de Pizza
-            const ctx1 = document.getElementById('pieChart').getContext('2d');
-            new Chart(ctx1, {
-                type: 'pie',
+                const timestamps = result.timestamps;
+                const data = result.data;
+
+                // Update summary cards
+                updateSummaryCards(data);
+
+                // Create enhanced pie chart
+                createPieChart(data);
+
+                // Create enhanced line chart
+                createLineChart(timestamps, data);
+
+                // Generate detailed analysis
+                generateDetailedAnalysis(data);
+
+            } catch (error) {
+                console.error('Erro ao carregar dados dos gráficos:', error);
+            }
+        }
+
+        function updateSummaryCards(data) {
+            const totals = {};
+            let grandTotal = 0;
+
+            // Calculate totals for each behavior
+            Object.keys(data).forEach(key => {
+                totals[key] = data[key].reduce((a, b) => a + b, 0);
+                grandTotal += totals[key];
+            });
+
+            // Update cards
+            document.getElementById('totalCount').textContent = grandTotal;
+            document.getElementById('attentionCount').textContent = totals.atento || 0;
+            document.getElementById('distractedCount').textContent = totals.distraido || 0;
+            document.getElementById('sleepingCount').textContent = totals.dormindo || 0;
+        }
+
+        function createPieChart(data) {
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            const totals = {};
+            
+            Object.keys(data).forEach(key => {
+                totals[key] = data[key].reduce((a, b) => a + b, 0);
+            });
+
+            new Chart(ctx, {
+                type: 'doughnut',
                 data: {
-                    labels: Object.keys(data),
+                    labels: Object.keys(totals).map(key => key.charAt(0).toUpperCase() + key.slice(1)),
                     datasets: [{
-                        data: Object.values(data).map(arr => arr.reduce((a, b) => a + b, 0)),
-                        backgroundColor: ['#76c7c0', '#ff9f40', '#4caf50', '#f44336', '#8e44ad']
+                        data: Object.values(totals),
+                        backgroundColor: Object.keys(totals).map(key => chartColors[key] || '#cccccc'),
+                        borderWidth: 3,
+                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        hoverBorderWidth: 5,
+                        hoverBorderColor: '#ffffff'
                     }]
                 },
                 options: {
                     responsive: true,
-                    animation: { animateScale: true, animateRotate: true }
+                    maintainAspectRatio: false,
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true,
+                        duration: 2000,
+                        easing: 'easeOutQuart'
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#ffffff',
+                                padding: 20,
+                                font: {
+                                    size: 14,
+                                    weight: '500'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#667eea',
+                            borderWidth: 1,
+                            cornerRadius: 8
+                        }
+                    },
+                    cutout: '50%'
                 }
             });
+        }
 
-            // Gráfico de Linha
-            const ctx2 = document.getElementById('lineChart').getContext('2d');
-            new Chart(ctx2, {
+        function createLineChart(timestamps, data) {
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            
+            const datasets = Object.keys(data).map(key => ({
+                label: key.charAt(0).toUpperCase() + key.slice(1),
+                data: data[key],
+                borderColor: chartColors[key] || getRandomColor(),
+                backgroundColor: (chartColors[key] || getRandomColor()) + '20',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 3,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                pointBackgroundColor: chartColors[key] || getRandomColor(),
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2
+            }));
+
+            new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: timestamps,
-                    datasets: Object.keys(data).map(key => ({
-                        label: key,
-                        data: data[key],
-                        borderColor: getRandomColor(),
-                        fill: false
-                    }))
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
-                    animation: { duration: 2000 },
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeOutQuart'
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#ffffff',
+                                padding: 20,
+                                font: {
+                                    size: 14,
+                                    weight: '500'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#667eea',
+                            borderWidth: 1,
+                            cornerRadius: 8
+                        }
+                    },
                     scales: {
-                        x: { title: { display: true, text: 'Horário' } },
-                        y: { title: { display: true, text: 'Quantidade' } }
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Tempo',
+                                color: '#ffffff',
+                                font: { size: 14, weight: '600' }
+                            },
+                            ticks: { color: '#b4b4b4' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Quantidade',
+                                color: '#ffffff',
+                                font: { size: 14, weight: '600' }
+                            },
+                            ticks: { color: '#b4b4b4' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
                     }
                 }
             });
         }
 
-        function getRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
+        function generateDetailedAnalysis(data) {
+            const totals = {};
+            Object.keys(data).forEach(key => {
+                totals[key] = data[key].reduce((a, b) => a + b, 0);
+            });
+
+            const total = Object.values(totals).reduce((a, b) => a + b, 0);
+            const attentionPercentage = ((totals.atento || 0) / total) * 100;
+            const distractedPercentage = ((totals.distraido || 0) / total) * 100;
+            const sleepingPercentage = ((totals.dormindo || 0) / total) * 100;
+
+            // Positive points
+            const positivePoints = [];
+            if (attentionPercentage > 50) positivePoints.push('Alta taxa de atenção detectada');
+            if (sleepingPercentage < 10) positivePoints.push('Baixo índice de alunos dormindo');
+            if (distractedPercentage < 30) positivePoints.push('Nível aceitável de distração');
+
+            // Attention points
+            const attentionPoints = [];
+            if (distractedPercentage > 40) attentionPoints.push('Alto nível de distração detectado');
+            if (sleepingPercentage > 20) attentionPoints.push('Muitos alunos dormindo durante a aula');
+            if (attentionPercentage < 30) attentionPoints.push('Baixa taxa de atenção dos alunos');
+
+            // Recommendations
+            const recommendations = [];
+            if (distractedPercentage > 30) recommendations.push('Considere tornar a aula mais interativa');
+            if (sleepingPercentage > 15) recommendations.push('Verifique se o ambiente está adequado para aprendizagem');
+            if (attentionPercentage < 40) recommendations.push('Implemente técnicas para aumentar o engajamento');
+
+            // Update DOM
+            updateAnalysisSection('positivePoints', positivePoints);
+            updateAnalysisSection('attentionPoints', attentionPoints);
+            updateAnalysisSection('recommendations', recommendations);
         }
 
-        loadGraphData();
+        function updateAnalysisSection(elementId, items) {
+            const element = document.getElementById(elementId);
+            if (items.length === 0) {
+                element.innerHTML = '<li>Nenhum ponto identificado</li>';
+            } else {
+                element.innerHTML = items.map(item => `<li>${item}</li>`).join('');
+            }
+        }
+
+        function getRandomColor() {
+            const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Report functionality
+        function downloadReport() {
+            // Implement PDF download functionality
+            alert('Funcionalidade de download em desenvolvimento');
+        }
+
+        function shareReport() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Relatório ClassEye',
+                    text: 'Confira este relatório de análise de comportamento',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Link copiado para a área de transferência!');
+                });
+            }
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGraphData();
+            
+            // Add animation delays to cards
+            document.querySelectorAll('.summary-card').forEach((card, index) => {
+                card.style.animationDelay = (index * 0.1) + 's';
+            });
+        });
     </script>
 </body>
 

@@ -1,0 +1,30 @@
+# ===============================
+# ClassEye - arquivos gerados
+# ===============================
+
+uploads/
+processed/
+
+# Flask / Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+.env.*
+
+# Logs
+*.log
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Relatórios e saídas
+static/reports/
+*.csv
+*.xlsx
+*.pkl
